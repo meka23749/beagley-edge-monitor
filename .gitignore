@@ -1,0 +1,4 @@
+*.o
+edge-monitor
+__pycache__/
+*.pyc
