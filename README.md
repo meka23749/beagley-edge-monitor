@@ -1,38 +1,113 @@
 # Industrial Edge Monitor (BeagleY-AI)
 
-Real-time hardware monitoring system running on BeagleY-AI with a custom Yocto Linux image.
+Real-time hardware monitoring system running on BeagleY-AI with a custom Yocto Linux image. Reads real CPU temperature, system metrics, controls onboard LEDs, and publishes data via MQTT.
 
 ## What it does
-- Reads real CPU temperature from the SoC thermal sensor
-- Monitors system resources (CPU load, RAM, disk)
-- Controls onboard LEDs based on system state (OK/ALARM)
-- Publishes sensor data via MQTT
-- Serves a real-time web dashboard
 
-## Hardware
-- **Board**: BeagleY-AI (TI AM67A, ARM Cortex-A53)
-- **Sensors**: Onboard thermal sensor, system metrics
-- **Actuators**: Onboard User LEDs
-- **Network**: WiFi / Ethernet
+BeagleY-AI Hardware
+|
++-----------+ +-------------+
+| Real |--->| Edge |---> MQTT Broker
+| Sensors | | Monitor (C) |
+| (SoC temp,| +-------------+
+| CPU, RAM)| |
++-----------+ +----------+
+| | REST API |
++-----------+ | Dashboard|
+| Onboard | | (Flask) |
+| LEDs | +----------+
+| (green/red)|
++-----------+
 
-## Difference from QEMU project
-| | QEMU Project | This Project |
+## Real Hardware Sensors
+
+| Sensor | Source | Threshold |
+|--------|--------|-----------|
+| CPU Temperature | `/sys/class/thermal/thermal_zone0/temp` | > 70°C |
+| CPU Usage | `/proc/stat` | > 80% |
+| RAM Usage | `/proc/meminfo` | > 85% |
+| Disk Usage | `statvfs("/")` | > 90% |
+| Load Average | `/proc/loadavg` | — |
+
+## Difference from QEMU Project
+
+| | [QEMU Project](https://github.com/meka23749/yocto-industrial-bridge) | This Project |
 |---|---|---|
 | Hardware | Emulated ARM64 | Real BeagleY-AI |
-| Temperature | Simulated | Real SoC sensor |
-| LEDs | Simulated (printf) | Real physical LEDs |
+| Temperature | Simulated (rand) | Real SoC thermal sensor |
+| CPU/RAM | Simulated | Real /proc/stat, /proc/meminfo |
+| LEDs | printf only | Real onboard LEDs via sysfs |
 | Network | Virtual | Real WiFi/Ethernet |
-| Dashboard | localhost | Accessible from any device |
 
 ## Tech Stack
-- **OS**: Custom Yocto Linux (Scarthgap) for BeagleY-AI
-- **Application**: C (sensor reading, LED control, MQTT)
-- **Dashboard**: Python Flask
-- **Build**: Dockerized Yocto build
+
+- **Board**: BeagleY-AI (TI AM67A, ARM Cortex-A53, 4GB RAM)
+- **OS**: Custom Yocto Linux (Scarthgap)
+- **Edge Monitor**: C (real sensor reading, LED control, MQTT publishing)
+- **Dashboard**: Python Flask (real-time hardware metrics)
+- **Build**: Dockerized Yocto build environment
 - **CI/CD**: GitHub Actions
 
-## Project Status
-🚧 Work in progress
+## Project Structure
+
+beagley-edge-monitor/
+├── meta-beagley-monitor/ # Custom Yocto layer
+│ ├── conf/layer.conf
+│ ├── recipes-app/
+│ │ ├── edge-monitor/ # C application
+│ │ │ ├── edge-monitor_1.0.bb
+│ │ │ └── files/
+│ │ │ ├── edge_monitor.c
+│ │ │ └── Makefile
+│ │ └── web-dashboard/ # Flask dashboard
+│ │ └── files/app.py
+│ └── recipes-core/images/
+│ └── edge-monitor-image.bb
+├── docker/Dockerfile
+├── scripts/docker-build.sh
+├── docs/ # Screenshots
+└── .github/workflows/build.yml
+
+## Quick Start
+
+### Test locally (without Yocto)
+```bash
+# Edge Monitor (reads real system metrics)
+cd meta-beagley-monitor/recipes-app/edge-monitor/files
+make && ./edge-monitor 5
+
+# Web Dashboard (real-time UI)
+cd meta-beagley-monitor/recipes-app/web-dashboard/files
+pip install flask
+python3 app.py
+# Open: http://localhost:5000
+```
+
+### Build with Docker
+```bash
+docker build -t beagley-monitor -f docker/Dockerfile .
+docker run -it beagley-monitor
+```
+
+## Screenshots
+
+### Edge Monitor (real hardware readings)
+![Edge Monitor Demo](docs/edge-monitor-demo.png)
+
+### Web Dashboard (real-time)
+![Dashboard](docs/beagley-dashboard.png)
+
+## API Endpoints
+
+| Endpoint | Description |
+|----------|-------------|
+| `GET /` | Web dashboard with real-time metrics |
+| `GET /api/sensors` | JSON sensor data |
+| `GET /api/health` | Health check |
 
 ## Author
-Steve Meka — Embedded Software Engineer
+
+**Steve Meka** — Embedded Software Engineer
+
+- Website: [stevkmef.com](https://www.stevkmef.com)
+- GitHub: [meka23749](https://github.com/meka23749)
