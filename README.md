@@ -4,20 +4,31 @@ Real-time hardware monitoring system running on BeagleY-AI with a custom Yocto L
 
 ## What it does
 
-BeagleY-AI Hardware
-|
-+-----------+ +-------------+
-| Real |--->| Edge |---> MQTT Broker
-| Sensors | | Monitor (C) |
-| (SoC temp,| +-------------+
-| CPU, RAM)| |
-+-----------+ +----------+
-| | REST API |
-+-----------+ | Dashboard|
-| Onboard | | (Flask) |
-| LEDs | +----------+
-| (green/red)|
-+-----------+
+```text
+                 BeagleY-AI Hardware
+
++----------------+
+| Real Sensors   |
+| (SoC Temp,     |
+| CPU Usage, RAM)|
++----------------+
+        |
+        v
++----------------+
+| Edge Monitor   |
+|      (C)       |
++----------------+
+        |
+        +------------------> MQTT Broker
+        |
+        +------------------> REST API
+        |                           |
+        v                           v
++----------------+        +----------------+
+| Onboard LEDs   |        | Dashboard      |
+| (Green / Red)  |        |    (Flask)     |
++----------------+        +----------------+
+```
 
 ## Real Hardware Sensors
 
@@ -50,23 +61,34 @@ BeagleY-AI Hardware
 
 ## Project Structure
 
+## Project Structure
+
+```text
 beagley-edge-monitor/
-├── meta-beagley-monitor/ # Custom Yocto layer
-│ ├── conf/layer.conf
-│ ├── recipes-app/
-│ │ ├── edge-monitor/ # C application
-│ │ │ ├── edge-monitor_1.0.bb
-│ │ │ └── files/
-│ │ │ ├── edge_monitor.c
-│ │ │ └── Makefile
-│ │ └── web-dashboard/ # Flask dashboard
-│ │ └── files/app.py
-│ └── recipes-core/images/
-│ └── edge-monitor-image.bb
-├── docker/Dockerfile
-├── scripts/docker-build.sh
-├── docs/ # Screenshots
-└── .github/workflows/build.yml
+├── meta-beagley-monitor/              # Custom Yocto layer
+│   ├── conf/
+│   │   └── layer.conf
+│   ├── recipes-app/
+│   │   ├── edge-monitor/             # C application
+│   │   │   ├── edge-monitor_1.0.bb
+│   │   │   └── files/
+│   │   │       ├── edge_monitor.c
+│   │   │       └── Makefile
+│   │   └── web-dashboard/            # Flask dashboard
+│   │       └── files/
+│   │           └── app.py
+│   └── recipes-core/
+│       └── images/
+│           └── edge-monitor-image.bb
+├── docker/
+│   └── Dockerfile
+├── scripts/
+│   └── docker-build.sh
+├── docs/                             # Screenshots
+└── .github/
+    └── workflows/
+        └── build.yml
+```
 
 ## Quick Start
 
