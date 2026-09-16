@@ -1,4 +1,4 @@
-# Industrial Edge Monitor (BeagleY-AI)
+# Industrial Edge Monitor (BeagleY)
 
 Real-time hardware monitoring system running on BeagleY-AI with a custom Yocto Linux image. Reads real CPU temperature, system metrics, controls onboard LEDs, and publishes data via MQTT.
 
