@@ -1,11 +1,11 @@
 # Industrial Edge Monitor (BeagleY)
 
-Real-time hardware monitoring system running on BeagleY-AI with a custom Yocto Linux image. Reads real CPU temperature, system metrics, controls onboard LEDs, and publishes data via MQTT.
+Real-time hardware monitoring system running on BeagleY with a custom Yocto Linux image. Reads real CPU temperature, system metrics, controls onboard LEDs, and publishes data via MQTT.
 
 ## What it does
 
 ```text
-                 BeagleY-AI Hardware
+                 BeagleY Hardware
 
 +----------------+
 | Real Sensors   |
@@ -129,7 +129,7 @@ docker run -it beagley-monitor
 
 ## Author
 
-**Steve Meka** — Embedded Software Engineer
+**Steve Meka**
 
 - Website: [stevkmef.com](https://www.stevkmef.com)
 - GitHub: [meka23749](https://github.com/meka23749)
