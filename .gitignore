@@ -2,3 +2,6 @@
 edge-monitor
 __pycache__/
 *.pyc
+*.exe
+test_logic
+test_logic.exe
