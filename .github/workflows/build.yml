@@ -35,6 +35,20 @@ jobs:
               -o test_logic
           ./test_logic
 
+  unit-tests-arm:
+    name: Unit Tests (ARM64)
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile and run unit tests on ARM64
+        run: |
+          gcc -I meta-beagley-monitor/recipes-app/edge-monitor/files -I tests/unity \
+              tests/test_monitor_logic.c \
+              meta-beagley-monitor/recipes-app/edge-monitor/files/monitor_logic.c \
+              tests/unity/unity.c \
+              -o test_logic_arm
+          ./test_logic_arm
+
   test-dashboard:
     name: Test Web Dashboard
     runs-on: ubuntu-latest
