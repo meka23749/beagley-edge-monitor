@@ -7,7 +7,7 @@ SRCS = edge_monitor.c monitor_logic.c
 all: $(TARGET)
 
 $(TARGET): $(SRCS)
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $(TARGET) $(SRCS)
+$(CC) $(CFLAGS) $(LDFLAGS) -o $(TARGET) $(SRCS)
 
 clean:
-	rm -f $(TARGET)
+rm -f $(TARGET)
