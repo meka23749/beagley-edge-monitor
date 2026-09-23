@@ -127,6 +127,12 @@ docker run -it beagley-monitor
 | `GET /api/sensors` | JSON sensor data |
 | `GET /api/health` | Health check |
 
+## Requirements & Traceability
+
+- [Requirements Specification](docs/beagley_01_Requirements.md) 
+- [Traceability Matrix](docs/beagley_02_Traceability_Matrix.md) 
+
+
 ## Author
 
 **Steve Meka**
