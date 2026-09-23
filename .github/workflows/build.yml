@@ -16,10 +16,24 @@ jobs:
         run: |
           cd meta-beagley-monitor/recipes-app/edge-monitor/files
           make
-      - name: Run edge-monitor test
+      - name: Run edge-monitor
         run: |
           cd meta-beagley-monitor/recipes-app/edge-monitor/files
           ./edge-monitor 2
+
+  unit-tests:
+    name: Unit Tests (logic)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile and run unit tests
+        run: |
+          gcc -I meta-beagley-monitor/recipes-app/edge-monitor/files -I tests/unity \
+              tests/test_monitor_logic.c \
+              meta-beagley-monitor/recipes-app/edge-monitor/files/monitor_logic.c \
+              tests/unity/unity.c \
+              -o test_logic
+          ./test_logic
 
   test-dashboard:
     name: Test Web Dashboard
@@ -51,5 +65,6 @@ jobs:
         run: |
           sudo apt-get install -y cppcheck
           cppcheck --error-exitcode=1 \
-            meta-beagley-monitor/recipes-app/edge-monitor/files/edge_monitor.c
+            meta-beagley-monitor/recipes-app/edge-monitor/files/edge_monitor.c \
+            meta-beagley-monitor/recipes-app/edge-monitor/files/monitor_logic.c
           echo "C code OK"

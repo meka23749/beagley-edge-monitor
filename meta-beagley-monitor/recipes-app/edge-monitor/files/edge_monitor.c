@@ -15,27 +15,8 @@
 
 /* ===== CONFIGURATION ===== */
 #define POLL_INTERVAL_SEC   2
-#define TEMP_ALARM_C        70.0f
-#define CPU_ALARM_PERCENT   80.0f
-#define RAM_ALARM_PERCENT   85.0f
-#define DISK_ALARM_PERCENT  90.0f
+#include "monitor_logic.h"
 #define MAX_HISTORY         30
-
-/* ===== DATA STRUCTURES ===== */
-typedef struct {
-    float cpu_temp;
-    float cpu_usage;
-    float ram_usage;
-    float disk_usage;
-    float load_avg_1min;
-} system_metrics_t;
-
-typedef enum {
-    STATE_OK      = 0,
-    STATE_WARNING = 1,
-    STATE_ALARM   = 2,
-    STATE_ERROR   = 3
-} monitor_state_t;
 
 typedef struct {
     monitor_state_t state;
@@ -267,16 +248,9 @@ void monitor_poll(monitor_t* m) {
     c->load_avg_1min = read_load_average();
 
     /* Determine state */
-    if (c->cpu_temp > TEMP_ALARM_C ||
-        c->cpu_usage > CPU_ALARM_PERCENT ||
-        c->ram_usage > RAM_ALARM_PERCENT) {
-        m->state = STATE_ALARM;
+    m->state = evaluate_state(*c);
+    if (m->state == STATE_ALARM) {
         m->alarm_count++;
-    } else if (c->cpu_temp > (TEMP_ALARM_C * 0.85f) ||
-               c->cpu_usage > (CPU_ALARM_PERCENT * 0.85f)) {
-        m->state = STATE_WARNING;
-    } else {
-        m->state = STATE_OK;
     }
 
     /* Update LEDs */
