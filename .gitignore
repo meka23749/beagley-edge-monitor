@@ -1,7 +1,8 @@
 *.o
-edge-monitor
 __pycache__/
 *.pyc
 *.exe
 test_logic
 test_logic.exe
+# Compiled executable (specific path, not the folder)
+meta-beagley-monitor/recipes-app/edge-monitor/files/edge-monitor
